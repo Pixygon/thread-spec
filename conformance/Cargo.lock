@@ -573,16 +573,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "infinite-manifest"
-version = "0.1.0"
-source = "git+https://github.com/Pixygon/Infinite.git#32a23fa041165de9135a19da3c806ff17c978c51"
-dependencies = [
- "serde",
- "serde_json",
- "thread-id",
-]
-
-[[package]]
 name = "ipnet"
 version = "2.12.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1337,17 +1327,29 @@ name = "thread-conformance"
 version = "0.1.0"
 dependencies = [
  "futures-util",
- "infinite-manifest",
  "reqwest",
  "serde_json",
+ "thread-manifest",
  "tokio",
  "tokio-tungstenite",
 ]
 
 [[package]]
-name = "thread-id"
+name = "thread-manifest"
 version = "0.1.0"
-source = "git+https://github.com/Pixygon/Infinite.git#32a23fa041165de9135a19da3c806ff17c978c51"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b6bdd6858f881619d9c2f0d93ac91ba0f7b153c49a8849e01398d0baa9105c62"
+dependencies = [
+ "serde",
+ "serde_json",
+ "thread-structured-id",
+]
+
+[[package]]
+name = "thread-structured-id"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b0b9e0c3a2be8419bd61438a434dc01220e2561214cf4754d069efd8482faac4"
 dependencies = [
  "serde",
 ]

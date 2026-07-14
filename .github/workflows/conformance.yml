@@ -1,0 +1,21 @@
+name: conformance
+
+# The runnable proof that the fixture corpus honours the Thread spec. Builds the
+# suite against the published `thread-manifest` crate (fully standalone — no
+# path/git deps), runs it over worlds/, and runs the clause + corpus unit tests.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  conformance:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Corpus is CONFORMANT
+        run: cargo run --manifest-path conformance/Cargo.toml -- worlds/
+      - name: Unit tests
+        run: cargo test --manifest-path conformance/Cargo.toml
