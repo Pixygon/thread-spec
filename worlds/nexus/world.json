@@ -3,7 +3,7 @@
   "world": {
     "id": "nexus",
     "title": "The Nexus",
-    "description": "The front door of the Thread. A great hall where every Pixygon world opens off a ring of veils — step through one to walk a pearl, or read the canon on the pedestals at the centre.",
+    "description": "The front door of the Thread. A great hall where every Pixygon world opens off a ring of veils \u2014 step through one to walk a pearl, or read the canon on the pedestals at the centre.",
     "author": {
       "id": "did:pixygon:pixygon",
       "name": "Pixygon"
@@ -207,7 +207,7 @@
       "data": {
         "kind": "signboard",
         "url": "https://pixygon.io",
-        "tagline": "Pixygon — we create and make dreams a reality."
+        "tagline": "Pixygon \u2014 we create and make dreams a reality."
       }
     }
   ],
@@ -289,7 +289,7 @@
         0.2
       ],
       "to": "thread://kartograf.pixygon.io/atlas#entry",
-      "label": "The Cartographer’s Hall",
+      "label": "The Cartographer\u2019s Hall",
       "preview": "live"
     },
     {
@@ -322,6 +322,54 @@
       ],
       "to": "thread://animunda.pixygon.io/menagerie#entry",
       "label": "The Menagerie",
+      "preview": "live"
+    },
+    {
+      "id": "to-archive",
+      "position": [
+        -7.0,
+        1.4,
+        9.0
+      ],
+      "scale": [
+        2.0,
+        3.0,
+        0.2
+      ],
+      "to": "thread://archive.pixygon.io/codex-archive#entry",
+      "label": "The Archive",
+      "preview": "live"
+    },
+    {
+      "id": "to-grove",
+      "position": [
+        0.0,
+        1.4,
+        10.5
+      ],
+      "scale": [
+        2.0,
+        3.0,
+        0.2
+      ],
+      "to": "thread://garden.pixygon.io/grove#entry",
+      "label": "The Grove",
+      "preview": "live"
+    },
+    {
+      "id": "to-vault",
+      "position": [
+        7.0,
+        1.4,
+        9.0
+      ],
+      "scale": [
+        2.0,
+        3.0,
+        0.2
+      ],
+      "to": "thread://vault.pixygon.io/vault#entry",
+      "label": "The Vault",
       "preview": "live"
     }
   ],
