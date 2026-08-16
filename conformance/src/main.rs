@@ -90,6 +90,16 @@ fn run_live(target: &str) -> ExitCode {
     let report = run(&corpus);
     println!("\nmanifest:");
     print_clauses(&report.clauses);
+
+    // C6 — the constellation clause: this world's veils lead SOMEWHERE a
+    // spec-only browser can go. Every portal destination is probed over the
+    // mandatory `.well-known` path (no registry, no resolver). Warn severity
+    // by the web's own semantics — a page is not invalid for a dead href —
+    // but every dead veil is named, because a directory of dead ends is a
+    // quality failure even when it is not a spec violation.
+    let c6 = rt.block_on(probe_portal_destinations(&fetched.body));
+    println!("\nconstellation:");
+    print_clauses(std::slice::from_ref(&c6));
     println!();
 
     if clauses_pass(&transport) && report.passed() {
@@ -98,6 +108,51 @@ fn run_live(target: &str) -> ExitCode {
     } else {
         println!("✗ NON-CONFORMANT — fix the ✗ [error] clauses above.");
         ExitCode::FAILURE
+    }
+}
+
+/// C6: every portal `to` in the manifest resolves over `.well-known`
+/// (world.json, then the served-markup `world.thread` fallback). Local-only
+/// destinations (`thread://home`) are skipped — they are each traveler's own.
+async fn probe_portal_destinations(manifest_body: &str) -> Clause {
+    let mut notes = Vec::new();
+    let Ok(m) = infinite_manifest::WorldManifest::from_json(manifest_body) else {
+        return Clause {
+            name: "C6 portal destinations resolve over .well-known",
+            severity: Severity::Warn,
+            pass: true,
+            notes: vec!["(manifest unparseable — checked elsewhere)".into()],
+        };
+    };
+    let mut dead = 0usize;
+    let mut total = 0usize;
+    for p in &m.portals {
+        let Some(loc) = infinite_manifest::Locator::parse(&p.to) else {
+            continue; // C3's problem, not C6's
+        };
+        if loc.host == "home" {
+            continue;
+        }
+        total += 1;
+        let url = infinite_manifest::well_known_url(&loc.host, &loc.path);
+        let ok = match reqwest::get(&url).await {
+            Ok(r) if r.status().is_success() => true,
+            _ => {
+                let alt = format!("{}world.thread", url.trim_end_matches("world.json"));
+                matches!(reqwest::get(&alt).await, Ok(r) if r.status().is_success())
+            }
+        };
+        if !ok {
+            dead += 1;
+            notes.push(format!("dead veil: '{}' → {}", p.label, p.to));
+        }
+    }
+    notes.insert(0, format!("{}/{total} destinations reachable without any resolver", total - dead));
+    Clause {
+        name: "C6 portal destinations resolve over .well-known",
+        severity: Severity::Warn,
+        pass: dead == 0,
+        notes,
     }
 }
 

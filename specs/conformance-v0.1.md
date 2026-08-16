@@ -53,6 +53,7 @@ assert!(report.passed());
 | C3 | portal destinations are valid Locators | Error | every portal `to` parses as `thread://…` |
 | C4 | constellation is connected | Warn | from an entry world (a world named `nexus`, else the veil-richest hub), every other world in the corpus is reachable via **internal** veils. External veils (to worlds hosted elsewhere) are counted, never penalized |
 | C5 | veils carry labels | Warn | every portal has a non-empty `label` (so a browser can name the doorway) |
+| C6 | portal destinations resolve over `.well-known` | Warn (`--live` only) | every portal `to` (except `thread://home`, which is each traveler's own) answers a `.well-known/thread/…/world.json` (or `world.thread`) GET — i.e. a spec-only browser holding **no resolver** can actually step through. Warn by the web's own semantics — a page is not invalid for a dead link — but every dead veil is named in the report: a directory of dead ends is a quality failure even when it is not a spec violation |
 
 ### Transport clauses (`--live` only)
 
