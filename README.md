@@ -38,6 +38,9 @@ The promise the standard exists to keep:
   content-addressed, verified, total program graphs that cannot diverge,
   allocate unboundedly, or lie about what they are. With
   **[Weft Packages](specs/weft-pack-v0.1.md)**, how they are distributed.
+- **[Structured Id](specs/structured-id-v0.1.md)** — `CCSSNNNN`, the name a
+  world gives its own parts. Required by the manifest and, until now, defined
+  only by a crate.
 - **[Model](specs/model-v0.1.md)** — a model as a flat list of carving steps:
   the format a mesher reads and an agent can write a line at a time.
 - **[Conformance Suite](specs/conformance-v0.1.md)** — the browser-independent

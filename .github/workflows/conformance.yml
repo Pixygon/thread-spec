@@ -1,8 +1,13 @@
 name: conformance
 
-# The runnable proof that the fixture corpus honours the Thread spec. Builds the
-# suite against the published `thread-manifest` crate (fully standalone — no
-# path/git deps), runs it over worlds/, and runs the clause + corpus unit tests.
+# The runnable proof that the fixture corpus honours the Thread spec.
+#
+# It installs the **published** suite rather than building a copy kept here.
+# There was a copy; it fell behind the release that decides what "conformant"
+# means — it read `--rendezvous` as a filename — while this repo's own docs told
+# contributors to run it. An arbiter that lags the thing it arbitrates is worse
+# than no arbiter, so there is one, and it comes from crates.io like everyone
+# else's.
 
 on:
   push:
@@ -15,8 +20,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
+      - name: Install the published suite
+        run: cargo install thread-conformance --locked
       - name: Corpus is CONFORMANT
-        run: cargo run --manifest-path conformance/Cargo.toml -- worlds/
+        run: thread-conformance worlds/
       # A schema nobody runs drifts from the spec it claims to describe, and
       # then quietly certifies the wrong thing.
       - name: Schema matches the corpus
@@ -40,5 +47,5 @@ jobs:
             console.log("✓ every corpus world matches the schema");
           '
 
-      - name: Unit tests
-        run: cargo test --manifest-path conformance/Cargo.toml
+      # The suite's own unit tests live with the suite, in the implementation
+      # repo, and run there: github.com/Pixygon/thread-engine

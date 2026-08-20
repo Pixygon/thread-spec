@@ -3,7 +3,7 @@
   "world": {
     "id": "nexus",
     "title": "The Nexus",
-    "description": "The front door of the Thread. A great hall where every Pixygon world opens off a ring of veils — step through one to walk a pearl, or read the canon on the pedestals at the centre.",
+    "description": "The front door of the Thread. A great hall where every Pixygon world opens off a ring of veils \u2014 step through one to walk a pearl, or read the canon on the pedestals at the centre.",
     "author": {
       "id": "did:pixygon:pixygon",
       "name": "Pixygon"
@@ -131,7 +131,7 @@
       "name": "pedestal:the-thread",
       "position": [
         -4.5,
-        0.5,
+        0.7,
         -1.5
       ],
       "scale": [
@@ -147,7 +147,7 @@
       "name": "pedestal:world-manifest",
       "position": [
         -1.5,
-        0.5,
+        0.7,
         -3
       ],
       "scale": [
@@ -163,7 +163,7 @@
       "name": "pedestal:godshard",
       "position": [
         1.5,
-        0.5,
+        0.7,
         -1.5
       ],
       "scale": [
@@ -179,7 +179,7 @@
       "name": "pedestal:invaders-sigil",
       "position": [
         4.5,
-        0.5,
+        0.7,
         -3
       ],
       "scale": [
@@ -207,7 +207,7 @@
       "data": {
         "kind": "signboard",
         "url": "https://pixygon.io",
-        "tagline": "Pixygon — we create and make dreams a reality."
+        "tagline": "Pixygon \u2014 we create and make dreams a reality."
       }
     }
   ],
@@ -289,7 +289,7 @@
         0.2
       ],
       "to": "thread://kartograf.pixygon.io/atlas#entry",
-      "label": "The Cartographer’s Hall",
+      "label": "The Cartographer\u2019s Hall",
       "preview": "live"
     },
     {

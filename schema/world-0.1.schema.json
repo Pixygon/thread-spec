@@ -113,7 +113,7 @@
         "type": "object",
         "required": ["prefab"],
         "properties": {
-          "prefab": { "type": "string", "description": "MUST reference a declared prefab id." },
+          "prefab": { "$ref": "#/$defs/structuredId", "description": "MUST reference a declared prefab id — and in the same two forms the id itself may take." },
           "name": { "type": "string" },
           "position": { "$ref": "#/$defs/vec3" },
           "rotation": { "$ref": "#/$defs/quat" },
@@ -207,9 +207,11 @@
       "maxItems": 4
     },
     "structuredId": {
-      "type": "string",
-      "pattern": "^[0-9]{8}$",
-      "description": "CCSSNNNN — category, subcategory, number. Category 60 is a world-local prefab; 46 is a world or host."
+      "description": "CCSSNNNN — category, subcategory, number. See specs/structured-id-v0.1.md. Category 60 is a world-local prefab; 46 is a world or host. The canonical form is the zero-padded 8-digit string, but the equivalent number is equally valid and MUST be accepted — category 01 encodes to 1000001, which is seven digits, so a string-only 8-digit pattern rejects a legal id.",
+      "oneOf": [
+        { "type": "string", "pattern": "^[0-9]{8}$" },
+        { "type": "integer", "minimum": 1000001, "maximum": 99999999 }
+      ]
     },
     "material": {
       "type": "object",
