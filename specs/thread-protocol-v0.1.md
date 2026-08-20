@@ -2,7 +2,7 @@
 
 The Thread is an open, spatial, present, time-aware medium — the successor to the
 web where **pages are places** and **links are doorways you step through**. This
-document is the map: it explains how the pieces fit, so you can read the five
+document is the map: it explains how the pieces fit, so you can read the
 normative specs in the right order and build either side — a **world** anyone can
 walk into, or a **browser** that walks them.
 

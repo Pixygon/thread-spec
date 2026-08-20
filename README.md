@@ -2,8 +2,11 @@
 
 **The Thread is an open medium, not a product.** It is the successor to the web
 where pages are *places* you walk into and links are *doorways* you step through.
-This repository is its **standard**: the normative specifications plus a runnable
-conformance suite. No single company owns the Thread — this repo is where the
+This repository is its **standard**: the normative specifications, plus the JSON
+Schema and the world corpus they are checked against. The conformance suite is a
+separate installable tool (`thread-conformance`), so that the arbiter everyone
+runs is one published artefact rather than a copy per checkout that quietly falls
+behind. No single company owns the Thread — this repo is where the
 format lives so that many browsers, many hosts, and many worlds can interoperate.
 
 The promise the standard exists to keep:
@@ -73,6 +76,11 @@ The conformance suite is the heart of the standard — it's how anyone verifies 
 world (or an engine's output) honours the spec, with no reference-browser required.
 
 ```bash
+# No Rust? Take a prebuilt binary — this installs `thread` and
+# `thread-conformance` for Linux and macOS:
+curl -fsSL https://raw.githubusercontent.com/Pixygon/thread-engine/main/install.sh | sh
+
+# With Rust:
 cargo install thread-conformance
 
 # a local corpus (a directory of <name>/world.json)
@@ -99,10 +107,12 @@ worlds interoperate with every Thread browser, forever.
 
 ## Implementations
 
-- **Infinite** — the reference browser (Rust + wgpu), built on the **Loom** engine.
+- **Infinite** — the reference browser (Rust + wgpu), built on the Loom engine.
 - **Loom** — an embeddable engine crate other browsers can build on (fill one
-  `WorldLoader` seam with your renderer). Neither is privileged: implementing the
-  specs directly in your own engine is equally valid.
+  `WorldLoader` seam with your renderer). It publishes to crates.io as
+  **`thread-engine`** — "Loom" is its name in the source tree, not the name you
+  install. Neither is privileged: implementing the specs directly in your own
+  engine is equally valid.
 
 The specs are the authority. Where an implementation and a spec disagree, the spec
 wins — file an issue.
@@ -115,6 +125,8 @@ changes happen in the open against this repo.
 
 ## License
 
-Specifications: [CC-BY-4.0](LICENSE-SPEC). Conformance suite (code):
+Specifications: [CC-BY-4.0](LICENSE-SPEC). Code — the schema here, and the
+conformance suite and tools that live in
+[thread-engine](https://github.com/Pixygon/thread-engine):
 [MIT OR Apache-2.0](LICENSE-CODE). Both permissive on purpose — copy, implement,
 fork, compete.

@@ -14,7 +14,6 @@ browser.
 
 ```bash
 # validate a local corpus (a directory of <name>/world.json)
-cargo run --manifest-path conformance/Cargo.toml -- worlds/
 thread-conformance path/to/worlds
 
 # check a LIVE host over its .well-known (host, host/path, or thread://…)
@@ -53,8 +52,8 @@ assert!(report.passed());
 | C3 | portal destinations are valid Locators | Error | every portal `to` parses as `thread://…` |
 | C4 | constellation is connected | Warn | from an entry world (a world named `nexus`, else the veil-richest hub), every other world in the corpus is reachable via **internal** veils. External veils (to worlds hosted elsewhere) are counted, never penalized |
 | C5 | veils carry labels | Warn | every portal has a non-empty `label` (so a browser can name the doorway) |
-| C6 | portal destinations resolve over `.well-known` | Warn (`--live` only) | every portal `to` (except `thread://home`, which is each traveler's own) answers a `.well-known/thread/…/world.json` (or `world.thread`) GET — i.e. a spec-only browser holding **no resolver** can actually step through. Warn by the web's own semantics — a page is not invalid for a dead link — but every dead veil is named in the report: a directory of dead ends is a quality failure even when it is not a spec violation |
-| C7 | geometry rests on the ground plane | Warn | no placement of a **centre-origin builtin** (`cube`, `sphere`, `cylinder`) has its lower half below `y = 0` — i.e. `position.y ≥ scale.y / 2`, within 5 cm. This is the invariant a changed mesh extent breaks silently: nobody files "the table is through the floor" as a bug, the room merely looks slightly strange. Deliberately half-buried geometry is legitimate, so Warn, and the check excludes what it cannot know: `plane` (flat, its y-scale means nothing), carved shapes, glTF assets (usually **base**-origin, where `y = 0` is correct), and anything marked non-solid, a text panel, or a light |
+| C6 | portal destinations resolve over `.well-known` | Warn (`--live` only) | every portal `to` (except `thread://home`, which is each traveler's own) answers a `.well-known/thread/…/world.json` (or `world.thread`) GET **with something that parses as a world** — i.e. a spec-only browser holding **no resolver** can actually step through. The parse requirement is not pedantry: a single-page app whose server rewrites unknown paths to `index.html` returns `200` and HTML for any veil pointed at it, so a status-only check calls it alive forever. Two doors of a fourteen-door hub were dead that way, under a green report. Warn by the web's own semantics — a page is not invalid for a dead link — but every dead veil is named in the report, distinguishing *no answer* from *answered, but not with a world* |
+| C7 | geometry rests on the ground plane | Warn | no placement of a **centre-origin builtin** (`cube`, `sphere`, `cylinder`, `capsule`) has its lower half below `y = 0` — i.e. `position.y ≥ scale.y / 2`, within 5 cm. This is the invariant a changed mesh extent breaks silently: nobody files "the table is through the floor" as a bug, the room merely looks slightly strange. Deliberately half-buried geometry is legitimate, so Warn, and the check excludes what it cannot know: `plane` (flat, its y-scale means nothing), carved shapes, glTF assets (usually **base**-origin, where `y = 0` is correct), and anything marked non-solid, a text panel, or a light |
 | C8 | declared files are present | Error | every **relative** `assets[].uri` resolves to a file beside the manifest. A relative URI names content the author ships in their own tree, so a missing one is not weather — the room loads perfectly, is missing its columns, and nothing complains, because the manifest alone is still valid. Absolute URIs are links out and belong to C6. `kind: "wasm"` is exempt: [behavior-abi-v0.1](behavior-abi-v0.1.md) §5 lets a browser ignore a module it cannot sandbox, so an absent behavior degrades to what the spec already promises, while an absent mesh leaves a hole |
 
 ### Transport clauses (`--live` only)
@@ -100,6 +99,31 @@ failure, since the verb was added after the first relays shipped.
 ~100 ms in the past without trusting peer clocks (§4). With a lone probe client a
 relay may not fan a pose back (area-of-interest / no peers); that's reported as a
 note, not a failure.
+
+### Rendezvous clauses (`--rendezvous` only)
+
+A P2P rendezvous is probed against
+[presence-topology-v0.1](presence-topology-v0.1.md). It is not a relay and must
+not be checked as one: a relay carries the traffic, whereas a rendezvous only
+introduces peers to each other and then gets out of the way. So the suite
+connects (`wss://…`), sends `announce`, and validates the introduction:
+
+| Message | Clause | Severity |
+|---------|--------|----------|
+| `welcome` | tagged `t=welcome`; assigns a peer `id` | Error |
+| `peers` | tagged `t=peers`; `peers` is an array of peer ids | Error |
+| — | the rendezvous is reachable over WebSocket | Error |
+| — | `welcome` arrives **before** `peers` | Error |
+| — | announcing gets `peers` back | Error |
+
+Ordering is an Error rather than a nicety because a peer list that arrives
+before the id is unattributable: the client cannot yet tell which entry is
+itself, and a client that dials itself deadlocks against its own offer.
+
+Note that a rendezvous answers nothing to a bare connect — it waits for
+`announce`. A plain HTTP GET against one is likewise expected to fail: these
+are WebSocket endpoints, and a `502` there is the correct answer, not an
+outage. Both have been misread as breakage.
 
 ### Resolution model
 
