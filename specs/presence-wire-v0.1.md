@@ -38,6 +38,16 @@ poses need no conversion.
   needs; without it, every such reader has to `join`, and a phantom body
   appears standing at the origin.
 
+- **Identity comes from the Passport and nowhere else.** The relay reads `sub`,
+  `name` and `avatar` from the presented Passport's claims; a top-level `name`
+  (or `sub`, or `avatar`) in the `join` frame is **not** honoured. It isn't
+  rejected either — unknown fields are ignored, per §1 — so sending
+  `{ t:"join", passport:"", name:"ada" }` connects successfully and produces an
+  *anonymous* occupant, which is the correct behaviour and a quiet one. An
+  implementer who wants a display name without an issuer has to render it
+  locally; the wire has no place to put an unattested one, deliberately, since
+  a name a relay repeats without verifying is a name anyone can claim.
+
 - The relay is authoritative on the occupant list and does area-of-interest culling
   (only relay poses within a radius / same sub-area).
 

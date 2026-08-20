@@ -85,6 +85,16 @@ of any relay:
 | `welcome` | declares `tick_hz` | Warn |
 | `pose` | tagged `t=pose`; carries `id`; **server-stamped `ts`**; position `p[3]`; **velocity `v[3]`**; an orientation (`r` xyzw *or* yaw `y`) | Error |
 | `pose` | orientation is a unit quaternion; carries animation state `a` | Warn |
+| `welcome` (observe) | marked `observer: true`; assigns the non-occupant `id: 0`; lists `occupants` **as they stand** | Error |
+| — | a watcher is sent no `pose` frames | Error |
+
+The observe clauses open a **second socket** and watch rather than join, because
+the property that matters is one a joined client cannot check about itself: that
+the watcher is not in the room it can see. A relay that answers `observe` with an
+ordinary `welcome` has given the watcher a body — it cannot tell it is observing,
+and it holds an occupant id that everyone else's roster will disagree about. A
+relay that does not answer `observe` at all is reported as a note rather than a
+failure, since the verb was added after the first relays shipped.
 
 `ts` and `v` are Errors because they are exactly what a client needs to interpolate
 ~100 ms in the past without trusting peer clocks (§4). With a lone probe client a
