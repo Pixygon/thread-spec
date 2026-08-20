@@ -138,6 +138,81 @@ step through. Crossing a portal to a new host performs an **identity handoff**
 (your Passport, avatar, and inventory travel) — specified separately in the
 Portal Handoff layer.
 
+### Nesting (the tree / DOM model)
+
+A placement MAY carry `children[]` — placements positioned **relative to their
+parent**. Their transforms compose down the tree (parent world-transform × child
+local-transform), so a scene is built by *containment* — a `table` with a `lamp`
+and a `book` on it — instead of every object carrying absolute coordinates. Move
+the parent and the whole group moves. A flat `placements[]` is just a forest of
+depth-1 trees, so existing worlds are unchanged. A browser MUST compose child
+transforms; colliders and interactables use the composed world position.
+
+### Styles (the cascade)
+
+`styles[]` is a **CSS-like cascade**: each rule has a `select` (a simple selector)
+and properties it attaches to matching placements — so you define behaviour once,
+by kind, instead of inline on every object. A placement carries a `type` (the
+element tag, e.g. `"tree"`) and `class[]` for selectors to target; its `name` is
+the id.
+
+```json
+"styles": [
+  { "select": "tree",         "interaction": { "label": "Chop", "effects": ["despawn"] } },
+  { "select": ".harvestable", "interaction": { "label": "Gather" } },
+  { "select": "#old-oak",     "interaction": { "label": "Fell the ancient oak" } }
+]
+```
+
+Selectors: `"tree"` (type), `".harvestable"` (class), `"#name"` (id). **Cascade:**
+an inline `placement.interaction` always wins (like inline `style=`); otherwise
+the highest-specificity matching rule applies (**id > class > type**), later rules
+breaking ties (source order). Unknown properties MUST be ignored. Today the layer
+cascades `interaction`; it grows to cover mesh + material. (Descendant selectors
+and inheritance down the tree are a later addition.)
+
+### Rules (a place opts into game mechanics)
+
+`environment.rules` declares the game-y mechanics this world **enforces on its
+visitors**. All default **off** — the browser ships them as capabilities and a
+place turns on only what it needs (as a page opts into pointer lock). Most
+threads are not games; a store or gallery leaves these off and remains a calm
+place to browse.
+
+| Rule | Meaning |
+|------|---------|
+| `survival` | Survival meters (hunger/…) decay and can harm the visitor. |
+| `gathering` | Harvestable resource nodes exist and can be gathered. |
+| `combat` | Offensive combat (attacking actors) is permitted. |
+
+The two input verbs — **activate** (the primary interact key) and **inspect**
+(examine) — are *always* available and are NOT gated by rules; they are the
+browser's click / right-click, not game mechanics.
+
+### Interactions (codeless, on a placement)
+
+A `placement.interaction` is a **declarative, no-code** interaction — the simple
+path (for anything richer, bind a `behavior` WASM module instead). The visitor's
+*activate* key runs it.
+
+```json
+"interaction": {
+  "label": "Chop",              // the creator-defined verb shown in the prompt
+  "hits": 3,                     // activations to complete it (default 1)
+  "effects": [                   // applied top-to-bottom on completion
+    { "give_item": { "item": "20100001", "count": 3 } },
+    "despawn",
+    { "message": "You chopped the old oak." },
+    { "effect": "leaves" }
+  ]
+}
+```
+
+Effects: `give_item` (into the visitor's inventory; `item` is a `StructuredId`),
+`despawn` (remove the object — mesh + collider), `message` (a transient toast),
+`effect` (a named visual/audio effect). Unknown effects MUST be ignored. A
+browser that implements the declarative layer runs these without any sandbox.
+
 ## 5. Conformance
 
 - A **conformant manifest** parses as JSON, carries a recognized `thread/…` tag,
@@ -161,7 +236,30 @@ fixtures and MUST validate under any implementation claiming `thread/0.1`.
 
 ## 7. Example
 
-See [`worlds/codex-archive/world.json`](../../worlds/codex-archive/world.json)
-(a walkable Codex viewer) and [`worlds/market/world.json`](../../worlds/market/world.json)
+See [`worlds/codex-archive/world.json`](https://github.com/Pixygon/thread-engine/tree/main/worlds/codex-archive/world.json)
+(a walkable Codex viewer) and [`worlds/market/world.json`](https://github.com/Pixygon/thread-engine/tree/main/worlds/market/world.json)
 (a walkable market). They portal to each other across hosts — the Thread's "two
 linked pages" moment.
+
+## Addendum (v0.1, 2026-08-17): procedural shape prefabs
+
+`MeshRef` gains a third, mutually exclusive source: `shape` — a
+signed-distance recipe tree (`prim`/`op`/`lathe` nodes; see
+`crates/infinite-manifest/src/shape.rs` for the normative field set) plus
+optional `resolution` (sampling density; browsers MUST clamp, reference cap
+96). A browser meshes the recipe at load time. Rationale: the Thread ships
+intent, not vertices — a model is a tiny, diffable recipe, and no asset
+hosting is needed for carved geometry. Additive: exactly one of
+`asset`/`builtin`/`shape` must be set; older browsers ignore shape prefabs.
+
+## Addendum (v0.1, 2026-08-17): procedural material recipes
+
+`MaterialRef` gains `texture` — a procedural PBR recipe (kind/scale/seed/
+colors/roughness/metallic/height/ao/size; see
+`crates/infinite-manifest/src/texture.rs` for the normative field set). A
+browser bakes it locally into base-color, tangent-space normal, and packed
+occlusion-roughness-metallic maps, deterministically (same recipe → same
+texels everywhere) and seamlessly tiling. When set, the baked maps take the
+place of the `*_texture` asset slots; scalar factors still multiply. Bake
+size is browser-clamped (reference cap 512). Additive: older browsers ignore
+the field and render the scalar material.

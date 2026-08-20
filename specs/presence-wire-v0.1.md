@@ -122,5 +122,5 @@ needs to hide jitter without trusting peer clocks.
 and added the relay→others `join` broadcast, so identity crosses the wire and §6's
 descriptor rendering is implementable. Both changes are additive: an anonymous
 traveler is `{ id }`, exactly the old shape, and clients ignore unknown tags.
-Reference: [`thread-relay`](../../crates/thread-relay) (relay side),
+Reference: [`thread-relay`](https://github.com/Pixygon/thread-engine/tree/main/crates/thread-relay) (relay side),
 `loom::presence` (client side).

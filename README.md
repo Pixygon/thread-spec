@@ -28,11 +28,37 @@ The promise the standard exists to keep:
   work for travelers who present none.
 - **[Avatar](specs/avatar-v0.1.md)** — the portable "you" a Passport points at,
   so one saved avatar renders the same in every world (optional).
+- **[Thread Markup](specs/thread-markup-v0.1.md)** — the authoring form. A
+  `.thread` file reads like HTML + CSS and compiles to a World Manifest; hosts
+  may serve it directly, and browsers accept either form (optional).
+- **[Presence Topology](specs/presence-topology-v0.1.md)** — how presence is
+  *organised*: federated relays, failover, area-of-interest scale, and a
+  serverless P2P tier, so it survives any one operator disappearing.
+- **[Weft](specs/weft-v0.1.md)** — the Thread's native code format:
+  content-addressed, verified, total program graphs that cannot diverge,
+  allocate unboundedly, or lie about what they are. With
+  **[Weft Packages](specs/weft-pack-v0.1.md)**, how they are distributed.
+- **[Model](specs/model-v0.1.md)** — a model as a flat list of carving steps:
+  the format a mesher reads and an agent can write a line at a time.
 - **[Conformance Suite](specs/conformance-v0.1.md)** — the browser-independent
   check. **Passing it is what "conformant" means.**
 - **[JSON Schema](schema/world-0.1.schema.json)** — the manifest's shape, for
   validating a `world.json` in any language. It checks shape only; the clauses
   that need the world's files or the network belong to the suite.
+
+## The reference implementation
+
+[**Pixygon/thread-engine**](https://github.com/Pixygon/thread-engine) implements
+all of this in Rust and publishes it to crates.io — the engine, the language,
+the mesher and the tools, MIT/Apache-2.0. It is *an* implementation, not the
+standard: **where the two disagree, this repository is right and that one has a
+bug.** It carries no copy of these documents, deliberately — a directory that
+claims to mirror a spec and quietly falls behind it is worse than no copy at all.
+
+```bash
+cargo install thread-cli
+thread init myplace && thread validate myplace && thread lint myplace
+```
 
 Contributing: **[CONTRIBUTING.md](CONTRIBUTING.md)** — anyone may propose a
 change, and the rule that matters is that a spec change without a matching

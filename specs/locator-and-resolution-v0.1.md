@@ -19,6 +19,29 @@ thread://<host>/<path>[@<when>][#<place>]
 `@when` and `#place` are **client-side** navigation *within* a resolved world; they
 never affect which document is fetched.
 
+### 1.1 The scheme names the medium, not the transport (normative)
+
+**Worlds are addressed `thread://`, never `https://`.** A scheme names
+*resolution + interaction semantics*: `thread://example.com` says "this names a
+place; resolve it by Thread rules (§2); expect a world, presence, time, identity."
+That HTTPS carries the bytes underneath (§3) is plumbing — early cars drove on
+horse roads. Owning the scheme decouples the identity of places from the transport
+du jour: when transfer evolves (WebTransport/QUIC, IPFS, whatever comes), every
+`thread://` address survives unchanged. Addresses are forever; transports are a
+decade.
+
+Consequences:
+- Every user-facing surface — documentation, browser UI, share sheets, portals,
+  QR codes — shows `thread://` Locators. **An `https://` URL presented as a
+  world's address is a bug.** (The one legitimate `https://` face of a world is a
+  *gateway* page, which exists precisely for old-web contexts and degrades a
+  Locator gracefully into them.)
+- Implementations SHOULD register `thread://` with the host OS (Windows registry,
+  macOS `CFBundleURLTypes`, Linux `x-scheme-handler/thread`) so Locators in
+  old-web surfaces (chat, email, documents) open a Thread browser directly.
+- Second implementers MUST NOT leak resolution URLs (§3's `https://…/world.json`)
+  into user space; they are internal to the resolution step.
+
 ## 2. Resolution algorithm (normative)
 
 Given a Locator, a conformant browser resolves it in this order, using the first

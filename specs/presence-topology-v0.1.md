@@ -46,6 +46,52 @@ A world declares its tier implicitly through its manifest `presence` block:
 Absent a relay/mode → **Tier 0**. This is the whole of the required surface; the
 rest of this document is how browsers and relays behave within it.
 
+### 2.1 The creator's whole decision (three words)
+
+A creator picks one of three things and is done — in Thread markup it is one
+attribute on `<world>`:
+
+```html
+<world presence="none">                       <!-- people off (the default) -->
+<world presence="p2p">                        <!-- participants host each other -->
+<world presence="wss://relay.example/thread/x"> <!-- hosted: your relay (comma = fallbacks) -->
+```
+
+- **`none`** — Tier 0. Nothing to run, nothing to configure.
+- **`p2p`** — the room is hosted by its participants: the first traveler whose
+  browser *allows hosting* (a passport-level setting, off by default — hosting
+  opens a listening port) becomes the room's host; if they leave, the next
+  willing traveler takes over (§3). No creator infrastructure at all.
+- **a relay URL** — hosted: the creator runs (or rents) any conformant relay
+  and names it. Everything else (fallbacks, sharding) is optional growth.
+
+### 2.2 Owner-tied rooms (`owner_required`) — a home with guests over
+
+A traveler's **home** is the special p2p case: its host is always its owner —
+you cannot volunteer to host someone else's home. The manifest a home serves to
+guests carries:
+
+```jsonc
+"presence": { "mode": "p2p", "relays": ["ws://<host>:<port>/thread/home"],
+              "owner_required": true }
+```
+
+`owner_required: true` declares that **the room lives only while its owner is
+present**. The rule needs no enforcement protocol — the owner's browser IS the
+host, so when the owner leaves (or quits), the host stops and every guest
+socket closes with it. A browser that finds itself in an `owner_required`
+world whose room has died SHOULD walk the traveler back to their *own* home
+(after a short reconnect grace) rather than leave them in a dead copy: the
+visit is over when the host goes home.
+
+**Invite addresses.** A browser hosting a place serves its manifest over plain
+HTTP on the same port as the room (`GET /.well-known/thread/world.json`), so
+the invite is an ordinary Locator with a port — `thread://192.0.2.17:4200` —
+and resolution is the standard `.well-known` fetch. A host carrying an
+explicit port resolves over `http://` (LAN/direct invites); bare hosts remain
+TLS-only. Reachability across NATs is the rendezvous tier's job (§3.2);
+port-carrying invites are the LAN/VPN floor that works with no infrastructure.
+
 ## 3. Tier 1 — P2P mesh (serverless)
 
 For small gatherings, presence needs **no dedicated server**. Peers connect
@@ -65,10 +111,56 @@ another peer.
 - **Survivability:** if every server on earth is gone, two people who can reach
   each other still share presence. This is the floor the whole design guarantees.
 
+### 3.1 Declaring P2P: the `rendezvous` field
+
+A P2P world names its rendezvous in an **explicit `presence.rendezvous` field**
+(never as a `relays` entry). The rendezvous speaks a *different protocol* (the
+`Signal` introduction wire, §3.2) with different failure semantics — if it is
+unreachable, an *existing* mesh keeps working, whereas a dead relay ends presence.
+Keeping the fields distinct means `relays` keeps its ordered-failover meaning
+unconditionally: when both are present, `relays` is the **Tier-2 fallback** a
+browser uses when the mesh can't form (rendezvous down, NAT traversal failed, or
+the mesh is at capacity) — the hybrid story.
+
+### 3.2 The rendezvous protocol (`Signal` wire)
+
+A rendezvous is a WebSocket endpoint at **`wss://<host>/rtc/<key>`** — the `/rtc`
+path distinguishes it from a relay's `/thread/<key>` when both share a host, and
+`<key>` follows the same opaque, fully-qualified room-key convention. Messages are
+JSON, tagged `"t"` (lowercase):
+
+```jsonc
+{"t":"announce","peer":<u32>,"world":"<key>"}   // client → rv, on join (provisional id)
+{"t":"welcome","id":<u32>}                      // rv → client: server-assigned id (OPTIONAL)
+{"t":"peers","peers":[<u32>,…]}                 // rv → client: who's already present
+{"t":"offer","from":<u32>,"to":<u32>,"sdp":"…"}       // relayed blindly to `to`
+{"t":"answer","from":<u32>,"to":<u32>,"sdp":"…"}      // relayed blindly to `to`
+{"t":"candidate","from":<u32>,"to":<u32>,"candidate":"…"} // relayed blindly to `to`
+{"t":"leave","peer":<u32>}                      // rv → room, on a disconnect
+```
+
+- The client's `announce.peer` id is **provisional**. A rendezvous SHOULD assign
+  ids (`welcome`, sent **before** `peers`) so ids never collide; a client MUST
+  adopt the `welcome` id. A minimal rendezvous MAY omit `welcome`, in which case
+  clients keep their self-picked ids (collision risk is the operator's choice).
+- Glare avoidance: for each pair in `peers`, the **lower id offers**
+  (`should_offer(me, other) = me < other`).
+- **The join delta is REQUIRED**: on an `announce`, besides `peers` to the
+  newcomer, the rendezvous MUST send `{"t":"peers","peers":[<newcomer>]}` to every
+  member already in the room. Without it the pair rule deadlocks: with assigned
+  ids the newcomer always has the *highest* id, so the offer is the existing
+  (lower-id) member's to make — and it can't offer to a peer it never heard of.
+- The rendezvous holds an ephemeral per-room peer set and relays `offer` /
+  `answer` / `candidate` to the peer named in `to`, **verbatim**, same room only.
+  It **never sees a pose** and holds no durable state — restart-safe, cattle not
+  pets. Reference implementation:
+  [`thread-rendezvous`](https://github.com/Pixygon/thread-engine/tree/main/crates/thread-rendezvous) (self-certifying; probe a
+  live one with `thread-conformance --rendezvous wss://…/rtc/<key>`).
+
 ## 4. Tier 2 — Relay
 
 One conformant relay instance per world (the reference is
-[`thread-relay`](../../crates/thread-relay)). The relay assigns occupant ids, stamps
+[`thread-relay`](https://github.com/Pixygon/thread-engine/tree/main/crates/thread-relay)). The relay assigns occupant ids, stamps
 `ts`, maintains the occupant list, and fans out within **area-of-interest** (§6).
 
 - **Federation:** the world names the relay; different worlds (even different hosts)

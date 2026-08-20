@@ -43,6 +43,15 @@ thread_on_tick(dt_ms: i32)                         // optional; only if "tick" i
 
 `ActionList` (module → host, the return of `on_interact`): `{ actions: [Action] }`.
 
+### Tick — the world's heartbeat
+
+A behavior that lists `"tick"` in its manifest `on[]` receives periodic tick
+events. WASM modules get `on_tick(dt_ms)` each frame. **Weft** modules are
+dispatched at a steady ~4 Hz with an event record offering
+`kind: "tick"` and `dt_ms` (total projection — the module's event type picks
+the fields it wants), and their returned Actions are performed exactly as for
+interact. Every beat is fuel-metered; worlds behave, they don't just react.
+
 ## 4. Actions (module → host, declarative effects)
 
 The module returns *intents*; the host performs them (so the sandbox never touches

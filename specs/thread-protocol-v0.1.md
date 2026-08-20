@@ -40,19 +40,27 @@ on a static host. Presence, behaviors, and time are upgrades you opt into.
    + a standard PBR material model), placements, portals, spawns, and optional
    behaviors/presence. This is the waist — start here.
 
-2. **[Locator & Resolution](locator-and-resolution-v0.1.md)** — the address of a
+2. **[Thread Markup](thread-markup-v0.1.md)** — the authoring form. A `.thread`
+   file reads like HTML + CSS and compiles to a World Manifest; hosts may serve
+   it directly (`world.thread`) and browsers accept either form. Optional to
+   implement, but the low floor that makes hand-authoring pleasant.
+
+3. **[Locator & Resolution](locator-and-resolution-v0.1.md)** — the address of a
    place and how a browser finds it. `thread://host/world@when#place`, resolved
    registry → the host's own **`.well-known/thread/world.json`** → local. The
    `.well-known` convention is what makes zero-coordination hosting real: HTTPS +
    `application/json` + `Access-Control-Allow-Origin: *`, and any browser can reach
    your world.
 
-3. **[Behavior ABI](behavior-abi-v0.1.md)** — how a world is interactive without
+4. **[Behavior ABI](behavior-abi-v0.1.md)** — how a world is interactive without
    trusting its code. Sandboxed WASM modules receive events and return declarative
    Actions (open a Codex entry, buy, navigate, emit presence, set state); the
-   browser — never the module — performs them. Optional.
+   browser — never the module — performs them. Optional. Its planned successor as
+   the *native* path is **[Weft](weft-v0.1.md)** (exploratory draft): a
+   content-addressed, verified program-graph format — ship intent, not
+   instructions — with WASM remaining as the polyglot floor.
 
-4. **[Presence Wire](presence-wire-v0.1.md)** — how a solo world becomes a shared
+5. **[Presence Wire](presence-wire-v0.1.md)** — how a solo world becomes a shared
    one. A world names a relay; browsers exchange poses over it (RH, +Y-up, metres;
    quaternion xyzw; interpolated ~100 ms in the past). Absent a relay, the world
    gracefully degrades to solo. Optional. Its companion,
@@ -60,10 +68,26 @@ on a static host. Presence, behaviors, and time are upgrades you opt into.
    organized* — federated relays, failover, area-of-interest scale, and a
    serverless P2P tier — so presence survives any single operator disappearing.
 
-5. **[Conformance Suite](conformance-v0.1.md)** — the browser-independent check
+6. **[Passport](passport-v0.1.md)** — one portable identity across the whole
+   Thread. A signed token (verified keys-only via `.well-known/thread/jwks.json`)
+   plus a fetchable descriptor carrying the traveler's avatar and consent. Worlds
+   hold references, never copies — which is what makes single sign-on, portable
+   appearance, and real erasure work. Optional; anonymous walking always works.
+   Its companion, **[Avatar](avatar-v0.1.md)**, fixes the portable "you" itself:
+   the shared `AvatarSpec` (slot → partId) and the Portable Item Convention
+   (self-describing part GLBs) that Unity games, the web Studio, and Thread
+   browsers all render identically.
+
+7. **[Conformance Suite](conformance-v0.1.md)** — the browser-independent check
    that a corpus of worlds (or a live host) honours all of the above. **The suite
    is the real standard**: if your worlds pass it, they are conformant, no matter
    whose tools made them.
+
+Alongside these, three documents specify formats the Thread uses rather than
+layers a browser must implement: **[Model](model-v0.1.md)** (a model as a flat
+list of carving steps — the format Chisel meshes and agents write),
+**[Weft Packages](weft-pack-v0.1.md)** (how verified programs are distributed),
+and **[Avatar](avatar-v0.1.md)** (the portable body a Passport carries).
 
 ## Addressing, concretely
 
