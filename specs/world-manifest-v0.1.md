@@ -72,7 +72,33 @@ A manifest is a JSON document. Top-level fields:
 | `placements[]` | | Instances: `{ prefab, position, rotation, scale, codex?, behavior?, data }`. |
 | `portals[]` | | Veils: `{ id, position, …, to (Locator), label, preview }`. |
 | `behaviors[]` | | WASM modules: `{ id, wasm (asset id), on[] }`. |
-| `presence` | | `{ relays[]?, relay?, max_occupants?, voice }`. Absent → solo. |
+| `presence` | | `{ mode?, relays[]?, relay?, rendezvous?, max_occupants?, voice }`. Absent → solo. `mode` ∈ `solo\|p2p\|relay` (see [presence-topology-v0.1](presence-topology-v0.1.md)) — a **declaration**, not a fact; see *What a world can do* below. |
+
+**What a world can do beats what it says.** `mode` states the author's intent;
+the address fields (`relays`, `relay`, `rendezvous`) are what a browser can
+actually act on. A consumer MUST derive the effective tier from the addresses:
+
+| Effective tier | When |
+|---|---|
+| `relay` | `relays` or `relay` names at least one relay |
+| `p2p` | no relay is named and `rendezvous` is present |
+| `solo` | neither |
+
+`mode` MUST agree with that derivation. Where it disagrees the addresses win —
+a world claiming `mode: "relay"` with no relay named cannot host anyone, and one
+naming a relay is not solo however it is labelled — and a validator SHOULD
+report the disagreement.
+
+An **empty** `relays: []` is the absence of a relay, never a considered choice
+of none. There is no way to spell "deliberately solo, do not offer me a relay";
+if that distinction is ever needed it gets a field of its own rather than an
+overloaded empty list.
+
+The corollary matters for tooling: a consumer deciding whether to *supply* a
+relay must ask whether one is named, never whether the `presence` key is
+present. Which keys an emitter writes is the emitter's business — `presence`
+absent and `presence: {"mode":"solo"}` mean the same thing, and a check for the
+key passes the second one while a room built for people ships silent.
 
 **Presence relays.** Prefer `relays` — an ordered list of interchangeable,
 conformant relays (primary first, then fallbacks) — so no single relay URL is a
