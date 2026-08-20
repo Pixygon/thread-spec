@@ -100,6 +100,19 @@ present. Which keys an emitter writes is the emitter's business — `presence`
 absent and `presence: {"mode":"solo"}` mean the same thing, and a check for the
 key passes the second one while a room built for people ships silent.
 
+**A reader may ignore; a writer may not drop.** A browser is free to skip
+fields it doesn't understand — it discards its parse when the world unloads.
+A **tool** that reads a world, changes something and writes it back is under a
+stronger obligation: it MUST carry unrecognised fields through unchanged. Every
+field added by an emitter newer than the reader looks unrecognised, so a lossy
+round trip deletes the parts of a world its author has not yet upgraded to
+read. A tool that cannot preserve them MUST NOT write the world back.
+
+This is why the effective-tier rule above is stated over *values* and not over
+a particular struct: a consumer should be able to answer "is a relay named?"
+from the JSON it already holds, without deserializing a whole world into a
+shape that may be older than the file.
+
 **Presence relays.** Prefer `relays` — an ordered list of interchangeable,
 conformant relays (primary first, then fallbacks) — so no single relay URL is a
 point of failure; a browser tries them in order and uses the first reachable one.
