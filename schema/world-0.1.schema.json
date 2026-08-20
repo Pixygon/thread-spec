@@ -2,9 +2,12 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://thread.pixygon.io/schema/world-0.1.schema.json",
   "title": "Thread World Manifest v0.1",
-  "description": "The open document format of the Thread — a walkable, addressable 3D place. Normative text: specs/world-manifest-v0.1.md. Where this schema and that document disagree, the document wins. This schema deliberately checks SHAPE only: clauses that need the world's own files or the network (C6 reachability, C8 asset presence) are the conformance suite's job.",
+  "description": "The open document format of the Thread \u2014 a walkable, addressable 3D place. Normative text: specs/world-manifest-v0.1.md. Where this schema and that document disagree, the document wins. This schema deliberately checks SHAPE only: clauses that need the world's own files or the network (C6 reachability, C8 asset presence) are the conformance suite's job.",
   "type": "object",
-  "required": ["thread", "world"],
+  "required": [
+    "thread",
+    "world"
+  ],
   "properties": {
     "thread": {
       "const": "thread/0.1",
@@ -12,40 +15,78 @@
     },
     "world": {
       "type": "object",
-      "required": ["id", "title"],
-      "description": "Only id and title are required. Unset optional metadata is omitted — never null or \"\" — so a consumer can test presence rather than presence-and-emptiness.",
+      "required": [
+        "id",
+        "title"
+      ],
+      "description": "Only id and title are required. Unset optional metadata is omitted \u2014 never null or \"\" \u2014 so a consumer can test presence rather than presence-and-emptiness.",
       "properties": {
-        "id": { "type": "string", "minLength": 1 },
-        "title": { "type": "string", "minLength": 1 },
-        "description": { "type": "string" },
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": {
+          "type": "string"
+        },
         "author": {
           "type": "object",
           "properties": {
-            "id": { "type": "string", "description": "DID-style stable id, matching a Passport sub." },
-            "name": { "type": "string" }
+            "id": {
+              "type": "string",
+              "description": "DID-style stable id, matching a Passport sub."
+            },
+            "name": {
+              "type": "string"
+            }
           },
           "additionalProperties": true
         },
-        "codex": { "type": "array", "items": { "type": "string" } },
-        "license": { "type": "string" }
+        "codex": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "license": {
+          "type": "string"
+        }
       },
       "additionalProperties": true
     },
     "environment": {
       "type": "object",
       "properties": {
-        "year": { "type": "integer", "description": "The @when — where this world sits on the timeline." },
+        "year": {
+          "type": "integer",
+          "description": "The @when \u2014 where this world sits on the timeline."
+        },
         "sky": {
           "type": "object",
           "properties": {
-            "zenith": { "$ref": "#/$defs/rgb" },
-            "horizon": { "$ref": "#/$defs/rgb" },
-            "sun_dir": { "$ref": "#/$defs/vec3" }
+            "zenith": {
+              "$ref": "#/$defs/rgb"
+            },
+            "horizon": {
+              "$ref": "#/$defs/rgb"
+            },
+            "sun_dir": {
+              "$ref": "#/$defs/vec3"
+            }
           },
           "additionalProperties": true
         },
-        "bounds": { "type": "object", "additionalProperties": true },
-        "rules": { "type": "object", "additionalProperties": true }
+        "bounds": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "rules": {
+          "type": "object",
+          "additionalProperties": true
+        }
       },
       "additionalProperties": true
     },
@@ -54,11 +95,19 @@
       "description": "Arrival points. The first is the default; the others are #place anchors.",
       "items": {
         "type": "object",
-        "required": ["position"],
+        "required": [
+          "position"
+        ],
         "properties": {
-          "name": { "type": "string" },
-          "position": { "$ref": "#/$defs/vec3" },
-          "yaw": { "type": "number" }
+          "name": {
+            "type": "string"
+          },
+          "position": {
+            "$ref": "#/$defs/vec3"
+          },
+          "yaw": {
+            "type": "number"
+          }
         },
         "additionalProperties": true
       }
@@ -67,15 +116,29 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["id", "uri"],
+        "required": [
+          "id",
+          "uri"
+        ],
         "properties": {
-          "id": { "type": "string", "minLength": 1 },
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
           "uri": {
             "type": "string",
             "minLength": 1,
             "description": "Absolute, or relative to the manifest's own directory. A relative uri MUST resolve to a file beside the manifest (conformance C8)."
           },
-          "kind": { "enum": ["gltf", "texture", "wasm", "audio", "other"] }
+          "kind": {
+            "enum": [
+              "gltf",
+              "texture",
+              "wasm",
+              "audio",
+              "other"
+            ]
+          }
         },
         "additionalProperties": true
       }
@@ -85,23 +148,59 @@
       "description": "Deduplicated renderables, keyed by StructuredId. Category 60 is world-local.",
       "items": {
         "type": "object",
-        "required": ["id"],
+        "required": [
+          "id"
+        ],
         "properties": {
-          "id": { "$ref": "#/$defs/structuredId" },
+          "id": {
+            "$ref": "#/$defs/structuredId"
+          },
           "mesh": {
             "type": "object",
-            "description": "Exactly one of builtin or asset. A builtin is one unit in extent and centred on its origin, so scale is the finished size in metres — except capsule, which is three units tall by construction.",
+            "description": "Exactly one of builtin or asset. A builtin is one unit in extent and centred on its origin, so scale is the finished size in metres \u2014 except capsule, which is three units tall by construction.",
             "oneOf": [
-              { "required": ["builtin"], "not": { "required": ["asset"] } },
-              { "required": ["asset"], "not": { "required": ["builtin"] } }
+              {
+                "required": [
+                  "builtin"
+                ],
+                "not": {
+                  "required": [
+                    "asset"
+                  ]
+                }
+              },
+              {
+                "required": [
+                  "asset"
+                ],
+                "not": {
+                  "required": [
+                    "builtin"
+                  ]
+                }
+              }
             ],
             "properties": {
-              "builtin": { "enum": ["cube", "sphere", "cylinder", "capsule", "plane", "quad"] },
-              "asset": { "type": "string", "description": "An id from assets[]." }
+              "builtin": {
+                "enum": [
+                  "cube",
+                  "sphere",
+                  "cylinder",
+                  "capsule",
+                  "plane",
+                  "quad"
+                ]
+              },
+              "asset": {
+                "type": "string",
+                "description": "An id from assets[]."
+              }
             },
             "additionalProperties": true
           },
-          "material": { "$ref": "#/$defs/material" }
+          "material": {
+            "$ref": "#/$defs/material"
+          }
         },
         "additionalProperties": true
       }
@@ -111,20 +210,42 @@
       "description": "Instances of prefabs in the world.",
       "items": {
         "type": "object",
-        "required": ["prefab"],
+        "required": [
+          "prefab"
+        ],
         "properties": {
-          "prefab": { "$ref": "#/$defs/structuredId", "description": "MUST reference a declared prefab id — and in the same two forms the id itself may take." },
-          "name": { "type": "string" },
-          "position": { "$ref": "#/$defs/vec3" },
-          "rotation": { "$ref": "#/$defs/quat" },
-          "scale": { "$ref": "#/$defs/vec3" },
-          "codex": { "type": "string" },
-          "behavior": { "type": "string" },
-          "data": { "type": "object", "additionalProperties": true },
+          "prefab": {
+            "$ref": "#/$defs/structuredId",
+            "description": "MUST reference a declared prefab id \u2014 and in the same two forms the id itself may take."
+          },
+          "name": {
+            "type": "string"
+          },
+          "position": {
+            "$ref": "#/$defs/vec3"
+          },
+          "rotation": {
+            "$ref": "#/$defs/quat"
+          },
+          "scale": {
+            "$ref": "#/$defs/vec3"
+          },
+          "codex": {
+            "type": "string"
+          },
+          "behavior": {
+            "type": "string"
+          },
+          "data": {
+            "type": "object",
+            "additionalProperties": true
+          },
           "children": {
             "type": "array",
             "description": "Nesting: a placement may carry its own placements, transformed relative to it.",
-            "items": { "$ref": "#/properties/placements/items" }
+            "items": {
+              "$ref": "#/properties/placements/items"
+            }
           }
         },
         "additionalProperties": true
@@ -132,22 +253,40 @@
     },
     "portals": {
       "type": "array",
-      "description": "Veils — the links that make this a web.",
+      "description": "Veils \u2014 the links that make this a web.",
       "items": {
         "type": "object",
-        "required": ["to"],
+        "required": [
+          "to"
+        ],
         "properties": {
-          "id": { "type": "string" },
-          "position": { "$ref": "#/$defs/vec3" },
-          "rotation": { "$ref": "#/$defs/quat" },
-          "scale": { "$ref": "#/$defs/vec3" },
+          "id": {
+            "type": "string"
+          },
+          "position": {
+            "$ref": "#/$defs/vec3"
+          },
+          "rotation": {
+            "$ref": "#/$defs/quat"
+          },
+          "scale": {
+            "$ref": "#/$defs/vec3"
+          },
           "to": {
             "type": "string",
             "pattern": "^thread://",
             "description": "A Locator. MUST parse per locator-and-resolution-v0.1 (conformance C3)."
           },
-          "label": { "type": "string" },
-          "preview": { "enum": ["none", "static", "live"] }
+          "label": {
+            "type": "string"
+          },
+          "preview": {
+            "enum": [
+              "none",
+              "static",
+              "live"
+            ]
+          }
         },
         "additionalProperties": true
       }
@@ -156,70 +295,141 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["id"],
+        "required": [
+          "id"
+        ],
         "properties": {
-          "id": { "type": "string" },
-          "wasm": { "type": "string", "description": "An id from assets[] with kind: wasm." },
-          "on": { "type": "array", "items": { "type": "string" } }
+          "id": {
+            "type": "string"
+          },
+          "wasm": {
+            "type": "string",
+            "description": "An id from assets[] with kind: wasm."
+          },
+          "on": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
         },
         "additionalProperties": true
       }
     },
     "presence": {
       "type": "object",
-      "description": "Absent → solo. The addresses are the facts and mode is a declaration: a world naming a relay is a relay world however it is labelled, and one naming nothing cannot host anyone whatever it claims. An empty relays[] is the absence of a relay, never a considered choice of none.",
+      "description": "Absent \u2192 solo. The addresses are the facts and mode is a declaration: a world naming a relay is a relay world however it is labelled, and one naming nothing cannot host anyone whatever it claims. An empty relays[] is the absence of a relay, never a considered choice of none.",
       "properties": {
-        "mode": { "enum": ["solo", "p2p", "relay"] },
-        "relays": { "type": "array", "items": { "type": "string" } },
-        "relay": { "type": ["string", "null"], "description": "Legacy singular form; relays[] is preferred." },
-        "rendezvous": { "type": "string" },
-        "max_occupants": { "type": "integer", "minimum": 1 },
-        "voice": { "type": "boolean" }
+        "mode": {
+          "enum": [
+            "solo",
+            "p2p",
+            "relay"
+          ]
+        },
+        "relays": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "relay": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Legacy singular form; relays[] is preferred."
+        },
+        "rendezvous": {
+          "type": "string"
+        },
+        "max_occupants": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "voice": {
+          "type": "boolean"
+        }
       },
       "additionalProperties": true
     },
     "styles": {
       "type": "array",
-      "description": "The cascade — shared material and transform defaults applied across placements.",
-      "items": { "type": "object", "additionalProperties": true }
+      "description": "The cascade \u2014 shared material and transform defaults applied across placements.",
+      "items": {
+        "type": "object",
+        "additionalProperties": true
+      }
     }
   },
   "additionalProperties": true,
   "$defs": {
     "vec3": {
       "type": "array",
-      "items": { "type": "number" },
+      "items": {
+        "type": "number"
+      },
       "minItems": 3,
       "maxItems": 3,
       "description": "Right-handed, +Y up, metres."
     },
     "quat": {
       "type": "array",
-      "items": { "type": "number" },
+      "items": {
+        "type": "number"
+      },
       "minItems": 4,
       "maxItems": 4,
       "description": "Unit quaternion [x, y, z, w]."
     },
     "rgb": {
       "type": "array",
-      "items": { "type": "number" },
+      "items": {
+        "type": "number"
+      },
       "minItems": 3,
       "maxItems": 4
     },
     "structuredId": {
-      "description": "CCSSNNNN — category, subcategory, number. See specs/structured-id-v0.1.md. Category 60 is a world-local prefab; 46 is a world or host. The canonical form is the zero-padded 8-digit string, but the equivalent number is equally valid and MUST be accepted — category 01 encodes to 1000001, which is seven digits, so a string-only 8-digit pattern rejects a legal id.",
+      "description": "CCSSNNNN \u2014 category, subcategory, number. See specs/structured-id-v0.1.md. Category 60 is a world-local prefab; 46 is a world or host. The canonical form is the zero-padded 8-digit string, but the equivalent number is equally valid and MUST be accepted \u2014 category 01 encodes to 1000001, which is seven digits, so a string-only 8-digit pattern rejects a legal id.",
       "oneOf": [
-        { "type": "string", "pattern": "^[0-9]{8}$" },
-        { "type": "integer", "minimum": 1000001, "maximum": 99999999 }
+        {
+          "type": "string",
+          "pattern": "^(?!00)[0-9]{4}(?!0000)[0-9]{4}$",
+          "description": "Canonical form: exactly eight digits, zero-padded. Category 00 and number 0000 are reserved and rejected (structured-id-v0.1 \u00a71)."
+        },
+        {
+          "type": "integer",
+          "minimum": 1000001,
+          "maximum": 99999999
+        }
       ]
     },
     "material": {
       "type": "object",
       "properties": {
-        "base_color": { "type": "array", "items": { "type": "number" }, "minItems": 3, "maxItems": 4 },
-        "roughness": { "type": "number", "minimum": 0, "maximum": 1 },
-        "metallic": { "type": "number", "minimum": 0, "maximum": 1 },
-        "emissive": { "type": "number", "minimum": 0 }
+        "base_color": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 3,
+          "maxItems": 4
+        },
+        "roughness": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "metallic": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "emissive": {
+          "type": "number",
+          "minimum": 0
+        }
       },
       "additionalProperties": true
     }
