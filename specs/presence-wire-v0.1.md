@@ -20,7 +20,7 @@ poses need no conversion.
   replies `welcome { id, occupants:[Occupant], tick_hz }`.
 - **`Occupant` is `{ id, sub?, name?, avatar? }`** — the identity claims the relay
   read from that occupant's Passport (`sub` the stable id, `name` the display
-  name, `avatar` the descriptor URL per passport-v0.1 §3). All three absent for
+  name, `avatar` the descriptor URL per [passport-v0.1](passport-v0.1.md) §3). All three absent for
   an anonymous traveler. This is what lets a browser fetch a co-traveler's
   descriptor and render *them* instead of a placeholder (§6).
 - `join` (relay→others): `{ t:"join", id, sub?, name?, avatar? }` — broadcast to

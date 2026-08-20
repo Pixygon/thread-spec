@@ -23,6 +23,11 @@ The promise the standard exists to keep:
   (optional).
 - **[Presence Wire](specs/presence-wire-v0.1.md)** — shared, multi-user worlds
   (optional).
+- **[Passport](specs/passport-v0.1.md)** — one portable identity across every
+  host, verified keys-only against the issuer's JWKS. Optional: a world MUST
+  work for travelers who present none.
+- **[Avatar](specs/avatar-v0.1.md)** — the portable "you" a Passport points at,
+  so one saved avatar renders the same in every world (optional).
 - **[Conformance Suite](specs/conformance-v0.1.md)** — the browser-independent
   check. **Passing it is what "conformant" means.**
 
