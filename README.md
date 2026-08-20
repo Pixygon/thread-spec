@@ -70,11 +70,17 @@ The conformance suite is the heart of the standard — it's how anyone verifies 
 world (or an engine's output) honours the spec, with no reference-browser required.
 
 ```bash
+cargo install thread-conformance
+
 # a local corpus (a directory of <name>/world.json)
 thread-conformance worlds/
 
 # a live host, over its .well-known
 thread-conformance --live yourdomain.com
+
+# a presence relay, or a P2P rendezvous
+thread-conformance --relay wss://your-relay
+thread-conformance --rendezvous wss://your-rendezvous
 ```
 
 Green means conformant. That's the whole social contract: pass the suite and your

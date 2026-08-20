@@ -7,17 +7,16 @@ wrong, unclear, or missing, you are the person this document is for.
 
 ## Before you open anything
 
-**Run the suite.** It settles more questions than a discussion does, and it
-builds standalone — its only dependency is
-[`thread-manifest`](https://crates.io/crates/thread-manifest) from crates.io, so
-you need none of our code to check your work:
+**Run the suite.** It settles more questions than a discussion does, and you
+need none of our code to do it — it installs from crates.io:
 
 ```bash
-git clone https://github.com/Pixygon/thread-spec
-cd thread-spec
-cargo run --manifest-path conformance/Cargo.toml -- worlds/        # the corpus
-cargo run --manifest-path conformance/Cargo.toml -- --live yourdomain.com
-cargo run --manifest-path conformance/Cargo.toml -- --relay wss://your-relay
+cargo install thread-conformance
+
+thread-conformance worlds/                        # a corpus of <name>/world.json
+thread-conformance --live yourdomain.com          # a live host, over .well-known
+thread-conformance --relay wss://your-relay       # a presence relay
+thread-conformance --rendezvous wss://your-rv     # a P2P rendezvous
 ```
 
 If the suite disagrees with a browser, **the suite and the spec are right and
