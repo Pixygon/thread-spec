@@ -54,6 +54,7 @@ assert!(report.passed());
 | C4 | constellation is connected | Warn | from an entry world (a world named `nexus`, else the veil-richest hub), every other world in the corpus is reachable via **internal** veils. External veils (to worlds hosted elsewhere) are counted, never penalized |
 | C5 | veils carry labels | Warn | every portal has a non-empty `label` (so a browser can name the doorway) |
 | C6 | portal destinations resolve over `.well-known` | Warn (`--live` only) | every portal `to` (except `thread://home`, which is each traveler's own) answers a `.well-known/thread/…/world.json` (or `world.thread`) GET — i.e. a spec-only browser holding **no resolver** can actually step through. Warn by the web's own semantics — a page is not invalid for a dead link — but every dead veil is named in the report: a directory of dead ends is a quality failure even when it is not a spec violation |
+| C7 | geometry rests on the ground plane | Warn | no placement of a **centre-origin builtin** (`cube`, `sphere`, `cylinder`) has its lower half below `y = 0` — i.e. `position.y ≥ scale.y / 2`, within 5 cm. This is the invariant a changed mesh extent breaks silently: nobody files "the table is through the floor" as a bug, the room merely looks slightly strange. Deliberately half-buried geometry is legitimate, so Warn, and the check excludes what it cannot know: `plane` (flat, its y-scale means nothing), `capsule` (three units tall by construction), carved shapes, glTF assets (usually **base**-origin, where `y = 0` is correct), and anything marked non-solid, a text panel, or a light |
 
 ### Transport clauses (`--live` only)
 
@@ -67,7 +68,7 @@ the manifest clauses run:
 | serves any-origin CORS | Error | `Access-Control-Allow-Origin: *` (so a cross-origin web browser can fetch it) |
 | declares JSON content-type | Warn | `Content-Type` contains `json` (the manifest still parses without it) |
 
-The served body is then run through clauses C1–C5 as a one-world corpus, so a host
+The served body is then run through clauses C1–C5 and C7 as a one-world corpus, so a host
 proves itself with exactly the checks a browser would apply.
 
 ### Relay clauses (`--relay` only)
