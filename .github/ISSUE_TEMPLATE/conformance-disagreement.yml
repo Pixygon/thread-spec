@@ -1,0 +1,32 @@
+name: A browser and the suite disagree
+description: An implementation does something the spec doesn't say, or refuses something it does.
+labels: ["conformance"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        The suite is the arbiter. If a browser disagrees with it, the browser is
+        wrong — **including when the browser is ours.**
+  - type: input
+    id: implementation
+    attributes:
+      label: Which implementation
+      placeholder: "Infinite 0.117.0 / my own browser / the relay at wss://…"
+    validations: { required: true }
+  - type: textarea
+    id: expected
+    attributes:
+      label: What the spec says should happen
+      description: Quote the clause if you can.
+    validations: { required: true }
+  - type: textarea
+    id: actual
+    attributes:
+      label: What actually happens
+    validations: { required: true }
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: A world or command that shows it
+      description: A minimal world.json is ideal. Paste it here.
+      render: json

@@ -1,6 +1,6 @@
 # Locator & Resolution — v0.1
 
-**Status:** Draft · **Layer:** Addressing (the URL + DNS of the Thread) · **Reference impl:** `src/resolver.rs`
+**Status:** Draft · **Layer:** Addressing (the URL + DNS of the Thread) · **Reference impl:** the resolver in [`thread-manifest`](https://crates.io/crates/thread-manifest); resolution is also exercised end-to-end by the conformance suite's `--live` mode
 
 How a `thread://` address is written, and how a browser turns it into a world —
 **including the decentralized path that lets anyone host a world on their own

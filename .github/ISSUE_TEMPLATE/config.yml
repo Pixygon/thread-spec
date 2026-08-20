@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Is my world conformant?
+    url: https://github.com/Pixygon/thread-spec/blob/main/conformance/BUILDING.md
+    about: Run the suite yourself — it answers faster than we can, and it is the arbiter.
+  - name: How do I build a world?
+    url: https://thread.pixygon.io/build
+    about: The manifest format, hosting on your own domain, and verifying it.

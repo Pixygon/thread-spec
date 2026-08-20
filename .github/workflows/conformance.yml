@@ -17,5 +17,28 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
       - name: Corpus is CONFORMANT
         run: cargo run --manifest-path conformance/Cargo.toml -- worlds/
+      # A schema nobody runs drifts from the spec it claims to describe, and
+      # then quietly certifies the wrong thing.
+      - name: Schema matches the corpus
+        run: |
+          npm install --no-save ajv@8
+          node -e '
+            const Ajv = require("ajv/dist/2020.js").default;
+            const fs = require("fs"), path = require("path");
+            const ajv = new Ajv({ strict: false, allErrors: true });
+            const validate = ajv.compile(JSON.parse(fs.readFileSync("schema/world-0.1.schema.json", "utf8")));
+            let bad = 0;
+            for (const d of fs.readdirSync("worlds")) {
+              const f = path.join("worlds", d, "world.json");
+              if (!fs.existsSync(f)) continue;
+              if (!validate(JSON.parse(fs.readFileSync(f, "utf8")))) {
+                bad++;
+                console.error("✗", d, JSON.stringify(validate.errors.slice(0, 3)));
+              }
+            }
+            if (bad) process.exit(1);
+            console.log("✓ every corpus world matches the schema");
+          '
+
       - name: Unit tests
         run: cargo test --manifest-path conformance/Cargo.toml

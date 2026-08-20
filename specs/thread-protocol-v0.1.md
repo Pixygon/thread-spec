@@ -33,7 +33,7 @@ presence, and a conformance check.
 A world is **static-first, presence-optional**: at minimum it's a single JSON file
 on a static host. Presence, behaviors, and time are upgrades you opt into.
 
-## The five specs, in reading order
+## The specs, in reading order
 
 1. **[World Manifest](world-manifest-v0.1.md)** — the "HTML" of the Thread. A
    renderer-agnostic JSON description of a place: prefabs (glTF or built-in meshes

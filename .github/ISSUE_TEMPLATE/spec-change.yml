@@ -1,0 +1,49 @@
+name: Propose a spec change
+description: Something in the standard is wrong, unclear, or missing.
+labels: ["spec"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Step 1 of four — see [CONTRIBUTING.md](../blob/main/CONTRIBUTING.md).
+        Prefer optional additions over required ones: every required field is a
+        tax on every implementer, forever.
+  - type: dropdown
+    id: spec
+    attributes:
+      label: Which spec
+      options:
+        - thread-protocol
+        - world-manifest
+        - locator-and-resolution
+        - behavior-abi
+        - presence-wire
+        - presence-topology
+        - passport
+        - avatar
+        - conformance
+        - none of these / a gap
+    validations: { required: true }
+  - type: textarea
+    id: problem
+    attributes:
+      label: The problem
+      description: What can't be expressed, or what is ambiguous? Name a concrete world, host or browser that hits it — that is far stronger than an argument from symmetry.
+    validations: { required: true }
+  - type: textarea
+    id: proposal
+    attributes:
+      label: The smallest change that solves it
+    validations: { required: true }
+  - type: textarea
+    id: browser
+    attributes:
+      label: What must a browser do with it?
+      description: And what happens to a world that omits it? Every optional field needs a documented default, or older worlds silently change meaning.
+    validations: { required: true }
+  - type: textarea
+    id: conformance
+    attributes:
+      label: How would the suite check it?
+      description: A spec change without a matching conformance change is incomplete. Error (a real interop violation) or Warn (a quality signal)?
+    validations: { required: true }

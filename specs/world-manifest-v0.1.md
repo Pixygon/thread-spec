@@ -1,6 +1,6 @@
 # World Manifest — v0.1
 
-**Status:** Draft · **Layer:** Content (the "HTML" of the Thread) · **Reference impl:** [`infinite-manifest`](../../crates/infinite-manifest)
+**Status:** Draft · **Layer:** Content (the "HTML" of the Thread) · **Reference impl:** [`thread-manifest`](https://crates.io/crates/thread-manifest) (crates.io)
 
 ## 1. What the Thread is
 

@@ -14,7 +14,7 @@ browser.
 
 ```bash
 # validate a local corpus (a directory of <name>/world.json)
-cargo run -p thread-conformance -- worlds
+cargo run --manifest-path conformance/Cargo.toml -- worlds/
 thread-conformance path/to/worlds
 
 # check a LIVE host over its .well-known (host, host/path, or thread://…)

@@ -30,6 +30,13 @@ The promise the standard exists to keep:
   so one saved avatar renders the same in every world (optional).
 - **[Conformance Suite](specs/conformance-v0.1.md)** — the browser-independent
   check. **Passing it is what "conformant" means.**
+- **[JSON Schema](schema/world-0.1.schema.json)** — the manifest's shape, for
+  validating a `world.json` in any language. It checks shape only; the clauses
+  that need the world's files or the network belong to the suite.
+
+Contributing: **[CONTRIBUTING.md](CONTRIBUTING.md)** — anyone may propose a
+change, and the rule that matters is that a spec change without a matching
+conformance change is incomplete.
 
 ## Prove your world conforms
 
