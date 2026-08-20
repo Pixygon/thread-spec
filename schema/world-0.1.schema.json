@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://thread.pixygon.io/schema/world-0.1.schema.json",
   "title": "Thread World Manifest v0.1",
-  "description": "The open document format of the Thread \u2014 a walkable, addressable 3D place. Normative text: specs/world-manifest-v0.1.md. Where this schema and that document disagree, the document wins. This schema deliberately checks SHAPE only: clauses that need the world's own files or the network (C6 reachability, C8 asset presence) are the conformance suite's job.",
+  "description": "The open document format of the Thread — a walkable, addressable 3D place. Normative text: specs/world-manifest-v0.1.md. Where this schema and that document disagree, the document wins. This schema deliberately checks SHAPE only: clauses that need the world's own files or the network (C6 reachability, C8 asset presence) are the conformance suite's job.",
   "type": "object",
   "required": [
     "thread",
@@ -19,7 +19,7 @@
         "id",
         "title"
       ],
-      "description": "Only id and title are required. Unset optional metadata is omitted \u2014 never null or \"\" \u2014 so a consumer can test presence rather than presence-and-emptiness.",
+      "description": "Only id and title are required. Unset optional metadata is omitted — never null or \"\" — so a consumer can test presence rather than presence-and-emptiness.",
       "properties": {
         "id": {
           "type": "string",
@@ -62,7 +62,7 @@
       "properties": {
         "year": {
           "type": "integer",
-          "description": "The @when \u2014 where this world sits on the timeline."
+          "description": "The @when — where this world sits on the timeline."
         },
         "sky": {
           "type": "object",
@@ -157,7 +157,7 @@
           },
           "mesh": {
             "type": "object",
-            "description": "Exactly one of builtin or asset. A builtin is one unit in extent and centred on its origin, so scale is the finished size in metres \u2014 except capsule, which is three units tall by construction.",
+            "description": "Exactly one of builtin or asset. A builtin is one unit in extent and centred on its origin, so scale is the finished size in metres — with no exceptions: the capsule was three units tall until 0.2.0, which meant one primitive's scale meant something different from its neighbours', and an author had to remember which.",
             "oneOf": [
               {
                 "required": [
@@ -216,7 +216,7 @@
         "properties": {
           "prefab": {
             "$ref": "#/$defs/structuredId",
-            "description": "MUST reference a declared prefab id \u2014 and in the same two forms the id itself may take."
+            "description": "MUST reference a declared prefab id — and in the same two forms the id itself may take."
           },
           "name": {
             "type": "string"
@@ -253,7 +253,7 @@
     },
     "portals": {
       "type": "array",
-      "description": "Veils \u2014 the links that make this a web.",
+      "description": "Veils — the links that make this a web.",
       "items": {
         "type": "object",
         "required": [
@@ -318,7 +318,7 @@
     },
     "presence": {
       "type": "object",
-      "description": "Absent \u2192 solo. The addresses are the facts and mode is a declaration: a world naming a relay is a relay world however it is labelled, and one naming nothing cannot host anyone whatever it claims. An empty relays[] is the absence of a relay, never a considered choice of none.",
+      "description": "Absent → solo. The addresses are the facts and mode is a declaration: a world naming a relay is a relay world however it is labelled, and one naming nothing cannot host anyone whatever it claims. An empty relays[] is the absence of a relay, never a considered choice of none.",
       "properties": {
         "mode": {
           "enum": [
@@ -355,7 +355,7 @@
     },
     "styles": {
       "type": "array",
-      "description": "The cascade \u2014 shared material and transform defaults applied across placements.",
+      "description": "The cascade — shared material and transform defaults applied across placements.",
       "items": {
         "type": "object",
         "additionalProperties": true
@@ -391,17 +391,21 @@
       "maxItems": 4
     },
     "structuredId": {
-      "description": "CCSSNNNN \u2014 category, subcategory, number. See specs/structured-id-v0.1.md. Category 60 is a world-local prefab; 46 is a world or host. The canonical form is the zero-padded 8-digit string, but the equivalent number is equally valid and MUST be accepted \u2014 category 01 encodes to 1000001, which is seven digits, so a string-only 8-digit pattern rejects a legal id.",
+      "description": "CCSSNNNN — category, subcategory, number. See specs/structured-id-v0.1.md. Category 60 is a world-local prefab; 46 is a world or host. The canonical form is the zero-padded 8-digit string, but the equivalent number is equally valid and MUST be accepted — category 01 encodes to 1000001, which is seven digits, so a string-only 8-digit pattern rejects a legal id.",
       "oneOf": [
         {
           "type": "string",
           "pattern": "^(?!00)[0-9]{4}(?!0000)[0-9]{4}$",
-          "description": "Canonical form: exactly eight digits, zero-padded. Category 00 and number 0000 are reserved and rejected (structured-id-v0.1 \u00a71)."
+          "description": "Canonical form: exactly eight digits, zero-padded. Category 00 and number 0000 are reserved and rejected (structured-id-v0.1 §1)."
         },
         {
           "type": "integer",
           "minimum": 1000001,
-          "maximum": 99999999
+          "maximum": 99999999,
+          "not": {
+            "multipleOf": 10000
+          },
+          "description": "The same value as the string, unpadded. `minimum` carries the category rule (the smallest legal id is 01·00·0001 = 1000001) and `not multipleOf 10000` carries the number rule, since an id whose NNNN is 0000 is exactly a multiple of 10000."
         }
       ]
     },
