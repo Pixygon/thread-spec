@@ -64,7 +64,7 @@ A manifest is a JSON document. Top-level fields:
 | Field | Req | Meaning |
 |-------|-----|---------|
 | `thread` | ✔ | Format tag; MUST be `"thread/0.1"`. |
-| `world` | ✔ | Metadata: `id`, `title`, `description`, `author`, `codex[]`, `license`. |
+| `world` | ✔ | Metadata: `id`, `title`, `description`, `author`, `codex[]`, `license`. Only `id` and `title` are required; **unset optional metadata is omitted, never emitted as `null` or `""`**, so a consumer can test presence rather than presence-and-emptiness. |
 | `environment` | | `year` (the `@when`), `sky`, `bounds`. |
 | `spawns[]` | | Arrival points; the first is the default, others are `#place` anchors. |
 | `assets[]` | | External content by id: `{ id, uri, kind }`, `kind ∈ gltf|texture|wasm|audio|other`. |
